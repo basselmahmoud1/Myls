@@ -54,7 +54,14 @@ int main(int argc, char **argv)
             sort_flags(nodes, no_entry);
             for (int i = 0; i <= no_entry; i++)
             {
-                if (f_a == 0)
+               
+                if(strcmp(".",copy_struct_nodes->dir_info.d_name) != 0 && f_d == 1 )
+                {
+                    copy_struct_nodes++;
+                    continue;
+                }
+                
+                if (f_a == 0 && f_d == 0)
                 {
                     if (copy_struct_nodes->dir_info.d_name[0] == '.')
                     {
@@ -96,7 +103,12 @@ int main(int argc, char **argv)
             sort_flags(nodes, no_entry);
             for (int i = 0; i <= no_entry; i++)
             {
-                if (f_a == 0)
+                if(strcmp(".",copy_struct_nodes->dir_info.d_name) != 0 && f_d == 1 )
+                {
+                    copy_struct_nodes++;
+                    continue;
+                }
+                if (f_a == 0 && f_d == 0)
                 {
                     if (copy_struct_nodes->dir_info.d_name[0] == '.')
                     {
