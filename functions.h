@@ -67,6 +67,8 @@ const char* gid_to_name ( all_info* node  );
 const char* filetype_conversion (all_info* node,mode type );
 const char* permissions (all_info* node);
 const char *time_conversion (all_info *node, mode type);
+uint64_t total_blocks(all_info** nodes,int no_entry);
+
 //compare algorithms 
 static int cmp_name (const void *p1, const void *p2);
 static int cmp_time_mod (const void *p1, const void *p2);

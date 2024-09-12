@@ -25,16 +25,43 @@ int main(int argc, char **argv)
         argv[optind] = ".";
     // loop on counts to implement ls
     argv_index_beg2 = index;
-    if(counter > 1)
+    if (counter > 1)
         f_multipesource = 1;
+
+    int num_args_to_copy = argc - optind;
+
+    // Allocate memory for the new array of strings
+    char **args_copy = malloc((num_args_to_copy + 1) * sizeof(char *));
+    if (args_copy == NULL)
+    {
+        perror("malloc");
+        exit(EXIT_FAILURE);
+    }
+
+    // Copy the strings from argv to the new array
+    if (num_args_to_copy != 0)
+    {
+        for (int i = 0; i < num_args_to_copy; i++)
+        {
+            args_copy[i] = strdup(argv[optind + i]);
+        }
+        args_copy[num_args_to_copy] = NULL;
+    }
+    else
+    {
+        args_copy[0] = strdup(argv[optind]);
+
+    }
+
+    int status = 0;
     while (counter--)
     {
 #ifdef debug
         printf("counter %d \n", counter);
 #endif
-        if(f_multipesource != 0)
+        if (f_multipesource != 0)
         {
-            printf("%s:\n",argv[argv_index_beg2 - (counter+1)]);
+            printf("%s:\n", args_copy[status]);
         }
         // prepare the data to be printed
 
@@ -52,15 +79,16 @@ int main(int argc, char **argv)
             // determine the sorting algorithm
             all_info *copy_struct_nodes = nodes;
             sort_flags(nodes, no_entry);
+            //printf("total %ld \n",total_blocks(&nodes,no_entry));
             for (int i = 0; i <= no_entry; i++)
             {
-               
-                if(strcmp(".",copy_struct_nodes->dir_info.d_name) != 0 && f_d == 1 )
+
+                if (strcmp(".", copy_struct_nodes->dir_info.d_name) != 0 && f_d == 1)
                 {
                     copy_struct_nodes++;
                     continue;
                 }
-                
+
                 if (f_a == 0 && f_d == 0)
                 {
                     if (copy_struct_nodes->dir_info.d_name[0] == '.')
@@ -71,16 +99,16 @@ int main(int argc, char **argv)
                 }
                 // check if the inode no will be printed
                 if (f_i)
-                    printf("%ld ", copy_struct_nodes->dir_info.inode_no);
+                    printf("%8ld ", copy_struct_nodes->dir_info.inode_no);
                 // print the file type & it's permissions
                 printf("%s%s ",
                        filetype_conversion(copy_struct_nodes, short_formate),
                        permissions(copy_struct_nodes));
                 // print no of hard links
-                printf("%ld ", copy_struct_nodes->inode_info.st_nlink);
+                printf("%3ld ", copy_struct_nodes->inode_info.st_nlink);
 
                 // print owner & group name
-                printf("%s %s ", uid_to_name(copy_struct_nodes), gid_to_name(copy_struct_nodes));
+                printf("%-10s %-10s ", uid_to_name(copy_struct_nodes), gid_to_name(copy_struct_nodes));
 
                 // print size of the file
 
@@ -91,7 +119,7 @@ int main(int argc, char **argv)
 
                 // print file name
 
-                print_file_name(copy_struct_nodes, argv, counter);
+                print_file_name(copy_struct_nodes, args_copy, status);
 
                 copy_struct_nodes++;
             }
@@ -103,7 +131,7 @@ int main(int argc, char **argv)
             sort_flags(nodes, no_entry);
             for (int i = 0; i <= no_entry; i++)
             {
-                if(strcmp(".",copy_struct_nodes->dir_info.d_name) != 0 && f_d == 1 )
+                if (strcmp(".", copy_struct_nodes->dir_info.d_name) != 0 && f_d == 1)
                 {
                     copy_struct_nodes++;
                     continue;
@@ -118,20 +146,20 @@ int main(int argc, char **argv)
                 }
                 // check if the inode no will be printed
                 if (f_i)
-                    printf("%ld ", copy_struct_nodes->dir_info.inode_no);
+                    printf("%8ld ", copy_struct_nodes->dir_info.inode_no);
 
                 // print file name
-                print_file_name(copy_struct_nodes, argv, counter);
-                
+                print_file_name(copy_struct_nodes, args_copy, status);
+
                 int copy_of_counter = counter;
-                if(copy_of_counter!=counter)
+                if (copy_of_counter != counter)
                 {
                     copy_of_counter = counter;
                     con = 0;
                 }
-                if (con == 4 && f_1 != 1 )
+                if (con == 4 && f_1 != 1)
                 {
-                    con = 0 ;
+                    con = 0;
                     printf("\n");
                 }
                 con++;
@@ -140,7 +168,7 @@ int main(int argc, char **argv)
 
                 copy_struct_nodes++;
             }
-            if (f_1 != 1 && con != 1 )
+            if (f_1 != 1 && con != 1)
                 printf("\n");
         }
 
@@ -148,8 +176,8 @@ int main(int argc, char **argv)
             printf("\n");
         // dont forget to free the inode_names
         free(nodes);
+        status++;
     }
 
     return 0;
 }
-

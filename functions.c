@@ -40,6 +40,9 @@ void options(int argc, char **argv)
             break;
         case 'f':
             f_f = 1;
+            f_a = 1;
+            f_l = 0;
+            f_1 = 0;
             break;
         case 'd':
             f_d = 1;
@@ -284,6 +287,18 @@ const char *time_conversion(all_info *node, mode type)
     }
 }
 
+uint64_t total_blocks(all_info** nodes,int no_entry)
+{
+    uint64_t total = 0 ;
+    all_info* copy = *nodes;
+    for(int i = 0 ; i <= no_entry ; i++)
+    {
+        total += copy->inode_info.st_blocks;
+        copy++;
+    }
+    return total;
+}
+
 
 static int cmp_name(const void *p1, const void *p2)
 {
@@ -417,7 +432,7 @@ void print_time(all_info *node)
     }
 }
 
-void print_file_name(all_info *node, char **argv, int counter)
+void print_file_name(all_info *node, char **argv, int status)
 {
     char *color_code = "\033[0m";
     if (S_ISDIR(node->inode_info.st_mode)) {
@@ -435,7 +450,7 @@ void print_file_name(all_info *node, char **argv, int counter)
             #ifdef debug
             printf("the index of the sym link is the path no :%d/n", argv_index_beg2 - (counter));
             #endif
-            snprintf(argv_copy, sizeof(argv_copy), "%s/%s", argv[argv_index_beg2 - (counter)], node->dir_info.d_name);
+            snprintf(argv_copy, sizeof(argv_copy), "%s/%s", argv[status], node->dir_info.d_name);
             char buffer[4096];
             int error = readlink(argv_copy, buffer, 4096);
             if (error == -1)
@@ -457,3 +472,4 @@ void print_file_name(all_info *node, char **argv, int counter)
         printf("%s%-10s\033[0m  ",color_code,node->dir_info.d_name);
     }
 }
+
