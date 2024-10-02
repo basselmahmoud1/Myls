@@ -64,7 +64,7 @@ The output is organized in a table format to provide a clear and structured view
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/Myls.git
+   git clone https://github.com/basselmahmoud1/Myls.git
    ```
 2. Navigate to the project directory:
    ```bash
